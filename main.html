@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NaCl — Enlace iónico | Presentación</title>
+<style>
+  :root{
+    --bg:#07101f;
+    --panel:#0e1b31;
+    --panel-2:#12233e;
+    --text:#f5f8ff;
+    --muted:#a9b7cf;
+    --blue:#57b9ff;
+    --cyan:#55f0de;
+    --yellow:#ffd86b;
+    --red:#ff7894;
+    --green:#7ff0a8;
+    --line:rgba(255,255,255,.12);
+    --shadow:0 28px 80px rgba(0,0,0,.36);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,system-ui,-apple-system,sans-serif;overflow:hidden}
+  body{
+    background:
+      radial-gradient(circle at 18% 15%, rgba(87,185,255,.16), transparent 28%),
+      radial-gradient(circle at 82% 80%, rgba(85,240,222,.10), transparent 30%),
+      var(--bg);
+  }
+
+  .deck{height:100vh;position:relative}
+  .slide{
+    position:absolute;inset:0;
+    padding:clamp(28px,5vw,72px);
+    display:grid;
+    align-content:center;
+    opacity:0;
+    transform:translateX(35px) scale(.985);
+    pointer-events:none;
+    transition:.5s cubic-bezier(.22,.7,.25,1);
+  }
+  .slide.active{opacity:1;transform:none;pointer-events:auto}
+  .slide.before{transform:translateX(-35px) scale(.985)}
+
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:800;
+    color:var(--cyan);margin-bottom:12px
+  }
+  h1,h2,h3,p{margin-top:0}
+  h1{font-size:clamp(2.8rem,7vw,6.6rem);line-height:.94;letter-spacing:-.055em;max-width:1050px}
+  h2{font-size:clamp(2.1rem,4.5vw,4.5rem);line-height:1;letter-spacing:-.04em;margin-bottom:20px}
+  h3{font-size:1.08rem;margin-bottom:8px}
+  p{font-size:clamp(1rem,1.45vw,1.28rem);line-height:1.55;color:var(--muted);max-width:900px}
+  strong{color:var(--text)}
+  .accent{color:var(--cyan)}
+  .blue{color:var(--blue)}
+  .yellow{color:var(--yellow)}
+  .red{color:var(--red)}
+  .green{color:var(--green)}
+
+  .hero-grid,.two-col{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:center;
+  }
+  .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:28px}
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
+    border:1px solid var(--line);border-radius:22px;padding:22px;
+    box-shadow:0 12px 40px rgba(0,0,0,.15);
+  }
+  .card p{font-size:1rem;margin-bottom:0}
+  .big-formula{
+    background:linear-gradient(145deg,rgba(87,185,255,.13),rgba(85,240,222,.08));
+    border:1px solid rgba(85,240,222,.3);border-radius:28px;padding:30px;
+    text-align:center;box-shadow:var(--shadow)
+  }
+  .formula{font-family:"Cambria Math",Georgia,serif;font-size:clamp(2rem,5vw,5rem);line-height:1.2}
+  .subformula{color:var(--muted);font-size:1rem;margin-top:12px}
+
+  .atom{
+    width:min(340px,72vw);aspect-ratio:1;position:relative;margin:auto;
+    border-radius:50%;display:grid;place-items:center;
+    background:radial-gradient(circle,rgba(85,240,222,.08),transparent 62%);
+  }
+  .nucleus{
+    width:96px;height:96px;border-radius:50%;
+    display:grid;place-items:center;font-weight:900;font-size:1.8rem;
+    background:linear-gradient(145deg,var(--blue),#6d7cff);
+    box-shadow:0 0 40px rgba(87,185,255,.35);
+  }
+  .shell{position:absolute;border:1.5px solid rgba(255,255,255,.28);border-radius:50%}
+  .s1{width:145px;height:145px}.s2{width:225px;height:225px}.s3{width:315px;height:315px}
+  .electron{position:absolute;width:15px;height:15px;border-radius:50%;background:var(--yellow);box-shadow:0 0 14px rgba(255,216,107,.8)}
+  .e-top{top:7px;left:50%;transform:translateX(-50%)}
+  .e-right{right:8px;top:50%;transform:translateY(-50%)}
+  .e-bottom{bottom:8px;left:50%;transform:translateX(-50%)}
+  .e-left{left:8px;top:50%;transform:translateY(-50%)}
+  .label-chip{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.05);padding:9px 13px;border-radius:999px;color:var(--muted);font-size:.9rem}
+
+  .transfer-stage{
+    display:grid;grid-template-columns:1fr auto 1fr;gap:26px;align-items:center;margin-top:28px
+  }
+  .ionbox{
+    min-height:260px;border:1px solid var(--line);border-radius:26px;
+    background:rgba(255,255,255,.045);display:grid;place-items:center;padding:24px;position:relative
+  }
+  .ion-symbol{font-size:clamp(4rem,8vw,7rem);font-weight:900;letter-spacing:-.05em}
+  .mini-orbit{font-size:.95rem;color:var(--muted);margin-top:4px}
+  .moving-e{
+    width:24px;height:24px;border-radius:50%;background:var(--yellow);box-shadow:0 0 18px rgba(255,216,107,.85);
+    display:grid;place-items:center;color:#142033;font-size:.72rem;font-weight:900;
+    transition:transform .9s cubic-bezier(.4,0,.2,1)
+  }
+  .transfer-stage.done .moving-e{transform:translateX(min(22vw,270px))}
+  .transfer-label{text-align:center;color:var(--muted);font-size:.9rem;margin-top:10px}
+  button{
+    appearance:none;border:0;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06101e;
+  }
+  button.secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
+
+  .charge-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:25px}
+  .charge{
+    flex:1 1 250px;border-radius:24px;padding:24px;border:1px solid var(--line);background:rgba(255,255,255,.045)
+  }
+  .charge .symbol{font-size:3.5rem;font-weight:900;margin-bottom:8px}
+  .charge.pos{box-shadow:inset 0 0 0 1px rgba(87,185,255,.08)}
+  .charge.neg{box-shadow:inset 0 0 0 1px rgba(255,120,148,.08)}
+  .analogy{
+    margin-top:24px;padding:18px 20px;border-left:4px solid var(--yellow);
+    background:rgba(255,216,107,.07);border-radius:0 16px 16px 0;color:#eaf1ff
+  }
+
+  .lewis{
+    display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;
+    font-family:"Cambria Math",Georgia,serif;font-size:clamp(2.2rem,5vw,4.8rem);margin-top:28px
+  }
+  .cl-box{
+    position:relative;border:2px solid rgba(255,255,255,.5);padding:14px 22px;border-radius:10px
+  }
+  .dots{font-size:1.1rem;letter-spacing:.18em;color:var(--yellow)}
+
+  .meter{
+    margin-top:28px;height:24px;border-radius:999px;background:linear-gradient(90deg,var(--green) 0 25%,var(--yellow) 25% 55%,var(--red) 55% 100%);
+    position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)
+  }
+  .marker{
+    position:absolute;left:78%;top:50%;width:5px;height:42px;background:#fff;transform:translate(-50%,-50%);
+    border-radius:8px;box-shadow:0 0 16px rgba(255,255,255,.65)
+  }
+  .meter-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:.82rem;margin-top:9px}
+  .calc{font-size:clamp(2rem,4.8vw,4rem);font-family:"Cambria Math",Georgia,serif;margin:26px 0 6px}
+
+  .lattice{
+    display:grid;grid-template-columns:repeat(6,46px);gap:10px;justify-content:center;margin:10px auto 20px
+  }
+  .lattice span{
+    width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:.78rem;
+  }
+  .na{background:rgba(87,185,255,.18);border:1px solid rgba(87,185,255,.6);color:#bde6ff}
+  .cl{background:rgba(255,120,148,.14);border:1px solid rgba(255,120,148,.58);color:#ffc2cf}
+  .property-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px}
+  .property{border:1px solid var(--line);border-radius:18px;padding:18px;background:rgba(255,255,255,.04)}
+  .property b{font-size:1.65rem;display:block;margin-top:4px}
+
+  .steps{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px
+  }
+  .step{border:1px solid var(--line);border-radius:20px;padding:20px;background:rgba(255,255,255,.045)}
+  .step .n{font-size:.78rem;color:var(--cyan);font-weight:900;letter-spacing:.12em}
+  .step b{display:block;margin:8px 0;font-size:1.12rem}
+  .memory{
+    margin-top:30px;padding:24px;border-radius:22px;background:linear-gradient(145deg,rgba(85,240,222,.1),rgba(87,185,255,.08));
+    border:1px solid rgba(85,240,222,.28);font-size:clamp(1.05rem,1.6vw,1.35rem);line-height:1.5
+  }
+
+  .controls{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:20;
+    display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:999px;
+    background:rgba(5,12,24,.74);backdrop-filter:blur(16px);border:1px solid var(--line)
+  }
+  .controls button{width:42px;height:42px;padding:0;background:rgba(255,255,255,.08);color:var(--text);font-size:1.1rem}
+  .counter{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.88rem;min-width:58px;text-align:center}
+  .progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--cyan),var(--blue));z-index:30;transition:width .35s}
+  .topbar{position:fixed;top:18px;right:22px;z-index:25;display:flex;gap:9px}
+  .topbar button{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line);padding:9px 13px;font-size:.82rem}
+
+  .notes{
+    position:fixed;right:20px;top:72px;bottom:82px;width:min(390px,calc(100vw - 40px));z-index:40;
+    padding:22px;border-radius:22px;background:rgba(5,12,24,.94);backdrop-filter:blur(18px);
+    border:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(calc(100% + 40px));transition:.35s;overflow:auto
+  }
+  .notes.open{transform:none}
+  .notes h3{font-size:1.15rem}.notes p{font-size:.98rem}
+  .kbd{font-size:.78rem;color:var(--muted);margin-top:12px}
+  kbd{border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:7px;padding:3px 6px;color:#fff}
+
+  @media(max-width:800px){
+    html,body{overflow:auto}
+    .deck{min-height:100vh;height:auto}
+    .slide{position:relative;display:none;min-height:100vh;padding:76px 22px 100px}
+    .slide.active{display:grid}
+    .hero-grid,.two-col{grid-template-columns:1fr}
+    .cards,.steps,.property-grid{grid-template-columns:1fr}
+    .transfer-stage{grid-template-columns:1fr}
+    .moving-e{display:none}
+    .atom{width:min(280px,82vw)}
+    .s3{width:260px;height:260px}.s2{width:190px;height:190px}.s1{width:125px;height:125px}
+    .lattice{grid-template-columns:repeat(5,42px)} .lattice span{width:42px;height:42px}
+  }
+
+  @media print{
+    body{overflow:visible;background:#fff;color:#111}
+    .slide{position:relative;opacity:1;transform:none;page-break-after:always;min-height:100vh;color:#111;background:#fff}
+    .slide *{color:#111 !important}
+    .controls,.topbar,.progress,.notes{display:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="topbar">
+  <button class="secondary" onclick="toggleNotes()">Notas del expositor</button>
+  <button class="secondary" onclick="document.documentElement.requestFullscreen?.()">Pantalla completa</button>
+</div>
+
+<main class="deck" id="deck">
+
+  <section class="slide active" data-note="Empieza con una pregunta sencilla: “¿Alguna vez se han preguntado qué mantiene unida a la sal?” Después presenta que NaCl es cloruro de sodio y que hoy explicarás por qué su enlace es iónico.">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Química · Estructura de compuestos</div>
+        <h1>¿Cómo se forma el <span class="accent">NaCl</span>?</h1>
+        <p>Una explicación sencilla del <strong>enlace iónico</strong>, desde los electrones de valencia hasta la red cristalina.</p>
+        <div class="cards">
+          <div class="card"><h3 class="blue">Na — Sodio</h3><p>Metal con <strong>1 electrón de valencia</strong>.</p></div>
+          <div class="card"><h3 class="red">Cl — Cloro</h3><p>No metal con <strong>7 electrones de valencia</strong>.</p></div>
+        </div>
+      </div>
+      <div class="big-formula">
+        <div class="formula"><span class="blue">Na</span><sup>+</sup> + <span class="red">Cl</span><sup>−</sup> → NaCl</div>
+        <div class="subformula">Cargas opuestas se atraen.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Aquí solo presenta a los dos protagonistas. Explica que un metal y un no metal pueden formar un enlace iónico cuando hay transferencia de electrones.">
+    <div>
+      <div class="eyebrow">Paso 1</div>
+      <h2>Conozcamos a los elementos</h2>
+      <div class="charge-row">
+        <div class="charge pos">
+          <div class="symbol blue">Na</div>
+          <h3>Sodio</h3>
+          <p>Es un <strong>metal</strong>. Tiene 11 electrones en total y solo <strong>1</strong> en su último nivel.</p>
+          <span class="label-chip">Distribución: 2 · 8 · 1</span>
+        </div>
+        <div class="charge neg">
+          <div class="symbol red">Cl</div>
+          <h3>Cloro</h3>
+          <p>Es un <strong>no metal</strong>. Tiene 17 electrones y <strong>7</strong> en su último nivel.</p>
+          <span class="label-chip">Distribución: 2 · 8 · 7</span>
+        </div>
+      </div>
+      <div class="analogy"><strong>Idea clave:</strong> al sodio le sobra 1 electrón; al cloro le falta 1 para completar 8.</div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="No necesitas recitar toda la configuración rápidamente. Lo importante es remarcar el final 3s¹: eso nos dice que el sodio tiene un electrón de valencia.">
+    <div class="two-col">
+      <div>
+        <div class="eyebrow">Paso 2 · Sodio</div>
+        <h2>El sodio tiene un electrón “solo”</h2>
+        <p>Su configuración electrónica es:</p>
+        <div class="calc blue">1s² 2s² 2p⁶ 3s¹</div>
+        <p>El último <strong>3s¹</strong> nos dice que tiene <strong>1 electrón de valencia</strong>. Al perderlo, queda con una capa anterior completa.</p>
+        <div class="analogy">Es como tener una caja llena y, encima, un solo objeto extra. Es más sencillo quitar ese objeto.</div>
+      </div>
+      <div class="atom" aria-label="Modelo simplificado del sodio">
+        <div class="shell s3"><span class="electron e-top"></span></div>
+        <div class="shell s2"></div>
+        <div class="shell s1"></div>
+        <div class="nucleus">Na</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Aquí contrasta con el sodio. El cloro tiene 7 electrones de valencia, por eso le conviene recibir uno para completar 8.">
+    <div class="two-col">
+      <div>
+        <div class="eyebrow">Paso 3 · Cloro</div>
+        <h2>Al cloro le falta solo uno</h2>
+        <p>Su configuración electrónica es:</p>
+        <div class="calc red">1s² 2s² 2p⁶ 3s² 3p⁵</div>
+        <p>En el último nivel tiene <strong>7 electrones</strong>. Si recibe uno, completa <strong>8 electrones</strong>.</p>
+        <div class="analogy">Imaginen una fila de 8 asientos: el cloro ya tiene 7 ocupados. Solo necesita uno más.</div>
+      </div>
+      <div class="big-formula">
+        <div class="formula"><span class="red">Cl</span> + e⁻ → <span class="red">Cl</span><sup>−</sup></div>
+        <div class="subformula">Al ganar un electrón, queda con carga negativa.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Esta es la parte central. Presiona el botón para animar la transferencia. Explica: el sodio no comparte el electrón; lo transfiere al cloro.">
+    <div>
+      <div class="eyebrow">Paso 4</div>
+      <h2>El electrón pasa del sodio al cloro</h2>
+      <p>En un enlace iónico ocurre una <strong>transferencia de electrones</strong>.</p>
+      <div class="transfer-stage" id="transferStage">
+        <div class="ionbox">
+          <div>
+            <div class="ion-symbol blue">Na</div>
+            <div class="mini-orbit">pierde 1 e⁻</div>
+          </div>
+        </div>
+        <div>
+          <div class="moving-e">e⁻</div>
+          <div class="transfer-label">transferencia</div>
+        </div>
+        <div class="ionbox">
+          <div>
+            <div class="ion-symbol red">Cl</div>
+            <div class="mini-orbit">gana 1 e⁻</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:22px"><button onclick="toggleTransfer()">Transferir electrón</button></div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Define las dos palabras nuevas: catión y anión. Luego usa la analogía de los imanes para explicar por qué se atraen.">
+    <div>
+      <div class="eyebrow">Paso 5</div>
+      <h2>Ahora aparecen dos iones</h2>
+      <div class="charge-row">
+        <div class="charge pos">
+          <div class="symbol blue">Na⁺</div>
+          <h3>Catión</h3>
+          <p>El sodio <strong>perdió un electrón</strong>, por eso queda con carga positiva.</p>
+        </div>
+        <div class="charge neg">
+          <div class="symbol red">Cl⁻</div>
+          <h3>Anión</h3>
+          <p>El cloro <strong>ganó un electrón</strong>, por eso queda con carga negativa.</p>
+        </div>
+      </div>
+      <div class="analogy"><strong>Como los imanes:</strong> las cargas de signo contrario se atraen. Esa atracción es la base del enlace iónico.</div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Explica que Lewis solo muestra electrones de valencia. Puedes señalar que, después de la transferencia, el cloro queda con 8 electrones alrededor.">
+    <div class="two-col">
+      <div>
+        <div class="eyebrow">Paso 6</div>
+        <h2>Estructura de Lewis</h2>
+        <p>La estructura de Lewis representa únicamente los <strong>electrones de valencia</strong>.</p>
+        <div class="lewis">
+          <span class="blue">Na⁺</span>
+          <span class="cl-box red">Cl<sup>−</sup><div class="dots">•• •• •• ••</div></span>
+        </div>
+        <div class="analogy"><strong>Regla del octeto:</strong> muchos átomos tienden a alcanzar 8 electrones en su último nivel.</div>
+      </div>
+      <div class="big-formula">
+        <div class="formula"><span class="blue">Na</span> → e⁻ → <span class="red">Cl</span></div>
+        <div class="subformula">El electrón se transfiere, no se comparte.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Presenta la electronegatividad como una forma de medir qué tanto atrae electrones un átomo. No hace falta entrar en detalles avanzados: la diferencia es grande y concuerda con un enlace iónico.">
+    <div>
+      <div class="eyebrow">Paso 7</div>
+      <h2>La electronegatividad confirma la idea</h2>
+      <p>La electronegatividad indica qué tanta capacidad tiene un átomo para atraer electrones.</p>
+      <div class="calc">ΔE = 3.0 − 0.9 = <span class="yellow">2.1</span></div>
+      <p>El cloro atrae electrones mucho más fuerte que el sodio. Una diferencia aproximada de <strong>2.1</strong> es consistente con un <strong>enlace iónico</strong>.</p>
+      <div class="meter"><span class="marker"></span></div>
+      <div class="meter-labels"><span>covalente no polar</span><span>covalente polar</span><span>iónico</span></div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Aclara que en un cristal de sal no existe una sola pareja aislada Na-Cl: hay muchísimos iones ordenados. Esa red ayuda a explicar sus propiedades.">
+    <div class="two-col">
+      <div>
+        <div class="eyebrow">Paso 8</div>
+        <h2>No hay una sola pareja: hay una red cristalina</h2>
+        <p>En un cristal de sal, muchísimos iones <span class="blue">Na⁺</span> y <span class="red">Cl⁻</span> se acomodan de manera ordenada.</p>
+        <div class="property-grid">
+          <div class="property">Punto de fusión<b>≈ 801 °C</b></div>
+          <div class="property">Punto de ebullición<b>≈ 1465 °C</b></div>
+        </div>
+        <p style="margin-top:18px">Las atracciones eléctricas entre los iones son fuertes, por eso el NaCl necesita bastante energía para fundirse.</p>
+      </div>
+      <div>
+        <div class="lattice" id="lattice"></div>
+        <p style="text-align:center;font-size:.9rem">Representación simplificada de una red cristalina.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Cierra repitiendo la secuencia en cuatro pasos. Esta es la parte ideal para memorizar antes de exponer.">
+    <div>
+      <div class="eyebrow">Resumen</div>
+      <h2>Todo en cuatro ideas</h2>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><b>Na tiene 1</b><p>El sodio tiene un electrón de valencia.</p></div>
+        <div class="step"><span class="n">02</span><b>Cl tiene 7</b><p>Al cloro le falta uno para completar 8.</p></div>
+        <div class="step"><span class="n">03</span><b>Se transfiere</b><p>Na cede un electrón y se forman Na⁺ y Cl⁻.</p></div>
+        <div class="step"><span class="n">04</span><b>Se atraen</b><p>Las cargas opuestas forman el enlace iónico.</p></div>
+      </div>
+      <div class="memory">
+        <strong>Frase para memorizar:</strong> “El sodio cede un electrón al cloro. Se forman Na⁺ y Cl⁻; como tienen cargas opuestas, se atraen y forman un enlace iónico.”
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-note="Termina con una pregunta al grupo para comprobar comprensión: “¿Quién da el electrón y quién lo recibe?”">
+    <div style="text-align:center;max-width:900px;margin:auto">
+      <div class="eyebrow">Fin</div>
+      <h1 style="font-size:clamp(3rem,7vw,6rem)">Na da. Cl recibe.<br><span class="accent">Y las cargas se atraen.</span></h1>
+      <p style="margin:24px auto 0">Pregunta rápida al grupo: <strong>¿quién se convierte en catión y quién en anión?</strong></p>
+    </div>
+  </section>
+
+</main>
+
+<aside class="notes" id="notes">
+  <h3>Notas del expositor</h3>
+  <p id="noteText"></p>
+  <div class="kbd">Navega con <kbd>←</kbd> <kbd>→</kbd> o <kbd>Espacio</kbd>.</div>
+</aside>
+
+<nav class="controls">
+  <button onclick="prevSlide()" aria-label="Anterior">←</button>
+  <span class="counter" id="counter">1 / 10</span>
+  <button onclick="nextSlide()" aria-label="Siguiente">→</button>
+</nav>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const noteText = document.getElementById('noteText');
+  let index = 0;
+
+  function showSlide(i){
+    index = Math.max(0, Math.min(i, slides.length-1));
+    slides.forEach((s,n)=>{
+      s.classList.toggle('active', n===index);
+      s.classList.toggle('before', n<index);
+    });
+    counter.textContent = `${index+1} / ${slides.length}`;
+    progress.style.width = `${((index+1)/slides.length)*100}%`;
+    noteText.textContent = slides[index].dataset.note || '';
+    history.replaceState(null,'',`#${index+1}`);
+  }
+  function nextSlide(){ showSlide(index+1) }
+  function prevSlide(){ showSlide(index-1) }
+  function toggleNotes(){ document.getElementById('notes').classList.toggle('open') }
+  function toggleTransfer(){ document.getElementById('transferStage').classList.toggle('done') }
+
+  document.addEventListener('keydown', e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); nextSlide(); }
+    if(['ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); prevSlide(); }
+    if(e.key.toLowerCase()==='n') toggleNotes();
+    if(e.key==='Escape') document.getElementById('notes').classList.remove('open');
+  });
+
+  // Red cristalina simplificada
+  const lattice = document.getElementById('lattice');
+  for(let r=0;r<5;r++){
+    for(let c=0;c<6;c++){
+      const cell=document.createElement('span');
+      const sodium=(r+c)%2===0;
+      cell.className=sodium?'na':'cl';
+      cell.textContent=sodium?'Na⁺':'Cl⁻';
+      lattice.appendChild(cell);
+    }
+  }
+
+  const hash = parseInt(location.hash.replace('#',''),10);
+  showSlide(Number.isFinite(hash) ? hash-1 : 0);
+</script>
+</body>
+</html>
